@@ -109,6 +109,8 @@ They are checked only when the script executes the corresponding step, so for in
 | `--client-id`          | `SEM_CLIENT_ID`      | Client ID used for service account authentication                    |  
 | `--client-secret`      | `SEM_CLIENT_SECRET`  | Client Secret used for service account authentication                |  
 
+> **Tip:** instead of exporting each variable by hand, fill in `setEnv.sh` and source it once per shell session (`source ./setEnv.sh`) before running the script.
+
 Examples:
 
 To export the repository from xDM:
@@ -166,6 +168,8 @@ They are checked only when the script executes the corresponding step, so for in
 > - The `--model-edition-key` is only necessary if the script needs to export and convert the model from xDM.  
 > If the model is already present in the model root folder (converted by another mean), the script will use it directly.
 > - `--client-id` and `--client-secret` should both be provided only if the sem CLI is not already authenticated (session, profile) against the target SDP platform.
+
+> **Tip:** instead of exporting each variable by hand, fill in `setEnv.sh` and source it once per shell session (`source ./setEnv.sh`) before running the script.
 
 
 ```bash
