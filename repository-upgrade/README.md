@@ -16,9 +16,10 @@ The scripts move an xDM instance to the Semarchy Data Platform (SDP / DM) in two
 Run the repository migration first. The data location migration expects roles, datasources and the rest of the repository config to exist in SDP already.
 
 > ⚠️ **Data migration:** the data must be migrated before you execute the import steps of the `migrateDataLocation` script.
-- For SDP SaaS the data must be migrated before you execute the import command within the `migrateDataLocation` script
-- For SDP Selfhosted, if you intend to migrate the data, same applies as above
-- Do not deploy your converted Data product on the target datasource before completing these scripts entirely. After the successful completion of these scripts you data location will be set to `DL_READY`. After this you can deploy your data product from VS Code or Design-CLI.
+>
+> - For SDP SaaS the data must be migrated before you execute the import command within the `migrateDataLocation` script
+> - For SDP Selfhosted, if you intend to migrate the data, same applies as above
+> - Do not deploy your converted Data product on the target datasource before completing these scripts entirely. After the successful completion of these scripts your data location will be set to `DL_READY`. After this you can deploy your data product from VS Code or Design-CLI.
 
 ## Files at a glance
 
