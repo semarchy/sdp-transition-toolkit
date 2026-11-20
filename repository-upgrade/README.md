@@ -4,6 +4,36 @@
 
 This guide provides instructions to migrate data from a local xDM instance to a SDP instance, either in SaaS or on premise (Self Hosted SDP).
 
+## What the toolkit does
+
+The scripts move an xDM instance to the Semarchy Data Platform (SDP / DM) in two separate flows:
+
+| Flow | Entry point | Scope |
+|---|---|---|
+| **Repository migration** | `migrateRepository` | Platform-wide configuration: roles, users, plugin bundles, image libraries, REST clients, variable providers, properties, notification servers, datasources, dashboards, translations, repository sequences. |
+| **Data location migration** | `migrateDataLocation` | One data location at a time: model export/conversion/build, attaching the model to a new data location in SDP, data-location resources (notification policies, continuous loads, purge schedule, data notifications), integration load/batch history, sanitize (upgrade) and `DL_READY`. |
+
+Run the repository migration first. The data location migration expects roles, datasources and the rest of the repository config to exist in SDP already.
+
+> ⚠️ **Data migration:** the data must be migrated before you execute the import steps of the `migrateDataLocation` script.
+- For SDP SaaS the data must be migrated before you execute the import command within the `migrateDataLocation` script
+- For SDP Selfhosted, if you intend to migrate the data, same applies as above
+- Do not deploy your converted Data product on the target datasource before completing these scripts entirely. After the successful completion of these scripts you data location will be set to `DL_READY`. After this you can deploy your data product from VS Code or Design-CLI.
+
+## Files at a glance
+
+| File | Lines | Role | Called by |
+|---|---|---|---|
+| `migrateRepository.sh` | ~190 | **Orchestrator** for the repository flow. Defines the steps, keeps resume state, delegates the work. | Operator |
+| `migrateDataLocation.sh` | ~325 | **Orchestrator** for the data-location flow. | Operator |
+| `migrateCommons.sh` | ~96 | Shared helpers for the two orchestrators only (step and resume engine, prompts, sem auth checks). | Sourced by both orchestrators |
+| `exportXdm.sh` | ~1630 | **Worker**: exports repository and data-location resources from xDM (REST API plus direct SQL on the repository DB) into the workspace. | Both orchestrators |
+| `exportXdmModel.sh` | ~630 | **Worker**: exports one model edition (XML plus i18n zip) from xDM. | `migrateDataLocation` |
+| `importXdm.sh` | ~2660 | **Worker**: imports workspace content into SDP via the `sem` CLI, Keycloak admin API and DM internal REST endpoints. | Both orchestrators |
+| `README.md` | | Operator guide. | |
+
+> ⚠️ **Naming:** the files in the repo end in `.sh`, but the orchestrators refer to them **without** the extension (`. ./migrateCommons`, `run bash exportXdm`, `available importXdm exportXdm exportXdmModel …`). `available` uses `type`, which looks the names up on `PATH`. Wherever the scripts are deployed, they must exist under the extensionless names, and the folder must be on `PATH` (or the names provided some other way) for the `available` check to pass. Keep this in mind when you add or rename a script.
+
 ## Pre-requisites
 
 During the migration process, either for a repository migration or a data location migration, the scripts first extract data from the source xDM instance, store them temporarily on disk in the migration workspace (`<user-dir>/.migrate`), and then push them to the target SDP instance.  
