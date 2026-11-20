@@ -113,7 +113,7 @@ function fixDataLocationModel {
 function buildDataLocationModelPayload {
   executeOrSkip "Build data location model payload" || return 0
   require MODEL_ROOT_FOLDER MODEL_NAME
-  run sem-design dm model build --root-folder "$MODEL_ROOT_FOLDER/src/$MODEL_NAME"
+  run sem-design data-product build --data-product-folder "$MODEL_ROOT_FOLDER/src/$MODEL_NAME"
   executed "Build data location model payload"
 }
 
@@ -123,8 +123,8 @@ function createDataLocation {
 
   local dataLocationVersion modelVersion modelFile
   dataLocationVersion="$(jq -r '.[] | select(.name=="'"$DATA_LOCATION"'") | .version' "$WORKSPACE_DIR/repository/dataLocations.json")"
-  modelVersion="$(jq -r ".dataHubModelSchemaVersion" "$MODEL_ROOT_FOLDER/src/$MODEL_NAME/model.json")"
-  modelFile="$MODEL_ROOT_FOLDER/src/$MODEL_NAME/model.json"
+  modelVersion="$(jq -r ".dataHubModelSchemaVersion" "$MODEL_ROOT_FOLDER/out/${MODEL_NAME}_DataProduct.json")"
+  modelFile="$MODEL_ROOT_FOLDER/out/${MODEL_NAME}_DataProduct.json"
   cat <<EOF
 Creating data location: $DATA_LOCATION
   Data source: $DATASOURCE
